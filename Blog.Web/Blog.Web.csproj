@@ -170,6 +170,10 @@
       <Project>{2d3c182f-b9c9-4f98-9f0c-ca91229ebd90}</Project>
       <Name>Blog.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Blog.Infrastructure\Blog.Infrastructure.csproj">
+      <Project>{ed27386e-42ac-4227-83ca-71932dd41247}</Project>
+      <Name>Blog.Infrastructure</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

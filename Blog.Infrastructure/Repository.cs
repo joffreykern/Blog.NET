@@ -14,7 +14,7 @@ namespace Blog.Infrastructure
     {
         protected EntitiesModel Context { get; private set; }
 
-        protected Repository(EntitiesModel context)
+        public Repository(EntitiesModel context)
         {
             Context = context;
         }

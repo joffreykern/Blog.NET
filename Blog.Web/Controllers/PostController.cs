@@ -8,17 +8,33 @@ using System.Web;
 using System.Web.Mvc;
 using Blog.Core.DomainObjects;
 using Blog.Core;
+using Blog.Core.Repository;
+using Blog.Infrastructure;
+using Blog.Core.Infrastructure;
 
 namespace Blog.Web.Controllers
 {
     public class PostController : Controller
     {
         private EntitiesModel db = new EntitiesModel();
+        private IRepository<PostDTO> _postRepository;
+        private IRepository<UserDTO> _userRepository;
+        private IRepository<CategoryDTO> _categoryRepository;
+        private IUnitOfWork _unitOfWork;
+
+        public PostController()
+        {
+            this._postRepository = new Repository<PostDTO>(db);
+            this._userRepository = new Repository<UserDTO>(db);
+            this._categoryRepository = new Repository<CategoryDTO>(db);
+            this._unitOfWork = new UnitOfWork(db);
+        }
 
         // GET: /Post/
         public ActionResult Index()
         {
-            var posts = db.Posts.Include(p => p.Category).Include(p => p.User);
+            //var posts = db.Posts.Include(p => p.Category).Include(p => p.User);
+            IEnumerable<PostDTO> posts = this._postRepository.GetAll();
             return View(posts.ToList());
         }
 
@@ -29,7 +45,9 @@ namespace Blog.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            PostDTO postdto = db.Posts.Find(id);
+
+            //PostDTO postdto = db.Posts.Find(id);
+            PostDTO postdto = this._postRepository.First((int)id);
             if (postdto == null)
             {
                 return HttpNotFound();
@@ -40,8 +58,8 @@ namespace Blog.Web.Controllers
         // GET: /Post/Create
         public ActionResult Create()
         {
-            ViewBag.CategoryId = new SelectList(db.Categories, "Id", "Name");
-            ViewBag.UserId = new SelectList(db.Users, "Id", "Username");
+            ViewBag.CategoryId = new SelectList(this._categoryRepository.GetAll(), "Id", "Name");
+            ViewBag.UserId = new SelectList(this._userRepository.GetAll(), "Id", "Username");
             return View();
         }
 
@@ -54,13 +72,15 @@ namespace Blog.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Posts.Add(postdto);
-                db.SaveChanges();
+                //db.Posts.Add(postdto);
+                //db.SaveChanges();
+                this._postRepository.Add(postdto);
+                this._unitOfWork.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.CategoryId = new SelectList(db.Categories, "Id", "Name", postdto.CategoryId);
-            ViewBag.UserId = new SelectList(db.Users, "Id", "Username", postdto.UserId);
+            ViewBag.CategoryId = new SelectList(this._categoryRepository.GetAll(), "Id", "Name", postdto.CategoryId);
+            ViewBag.UserId = new SelectList(this._userRepository.GetAll(), "Id", "Username", postdto.UserId);
             return View(postdto);
         }
 
@@ -71,13 +91,14 @@ namespace Blog.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            PostDTO postdto = db.Posts.Find(id);
+            //PostDTO postdto = db.Posts.Find(id);
+            PostDTO postdto = this._postRepository.First((int)id);
             if (postdto == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.CategoryId = new SelectList(db.Categories, "Id", "Name", postdto.CategoryId);
-            ViewBag.UserId = new SelectList(db.Users, "Id", "Username", postdto.UserId);
+            ViewBag.CategoryId = new SelectList(this._categoryRepository.GetAll(), "Id", "Name", postdto.CategoryId);
+            ViewBag.UserId = new SelectList(this._userRepository.GetAll(), "Id", "Username", postdto.UserId);
             return View(postdto);
         }
 
@@ -90,12 +111,14 @@ namespace Blog.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(postdto).State = EntityState.Modified;
-                db.SaveChanges();
+                //db.Entry(postdto).State = EntityState.Modified;
+                //db.SaveChanges();
+                this._postRepository.Update(postdto);
+                this._unitOfWork.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.CategoryId = new SelectList(db.Categories, "Id", "Name", postdto.CategoryId);
-            ViewBag.UserId = new SelectList(db.Users, "Id", "Username", postdto.UserId);
+            ViewBag.CategoryId = new SelectList(this._categoryRepository.GetAll(), "Id", "Name", postdto.CategoryId);
+            ViewBag.UserId = new SelectList(this._userRepository.GetAll(), "Id", "Username", postdto.UserId);
             return View(postdto);
         }
 
@@ -106,7 +129,8 @@ namespace Blog.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            PostDTO postdto = db.Posts.Find(id);
+            //PostDTO postdto = db.Posts.Find(id);
+            PostDTO postdto = this._postRepository.First((int)id);
             if (postdto == null)
             {
                 return HttpNotFound();
@@ -119,9 +143,11 @@ namespace Blog.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            PostDTO postdto = db.Posts.Find(id);
-            db.Posts.Remove(postdto);
-            db.SaveChanges();
+            //PostDTO postdto = db.Posts.Find(id);
+            //db.Posts.Remove(postdto);
+            //db.SaveChanges();
+            this._postRepository.Delete(id);
+            this._unitOfWork.SaveChanges();
             return RedirectToAction("Index");
         }
 

@@ -19,7 +19,7 @@ namespace Blog.Infrastructure
             }
         }
 
-        protected UnitOfWork(EntitiesModel context)
+        public UnitOfWork(EntitiesModel context)
         {
             this._context = context;
         }
