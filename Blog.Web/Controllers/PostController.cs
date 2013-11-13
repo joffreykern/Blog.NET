@@ -22,12 +22,12 @@ namespace Blog.Web.Controllers
         private IRepository<CategoryDTO> _categoryRepository;
         private IUnitOfWork _unitOfWork;
 
-        public PostController()
+        public PostController(IRepository<PostDTO> postRepository, IRepository<UserDTO> userRepository, IRepository<CategoryDTO> categoryRepository, IUnitOfWork unitOfWork)
         {
-            this._postRepository = new Repository<PostDTO>(db);
-            this._userRepository = new Repository<UserDTO>(db);
-            this._categoryRepository = new Repository<CategoryDTO>(db);
-            this._unitOfWork = new UnitOfWork(db);
+            this._postRepository = postRepository;
+            this._userRepository = userRepository;
+            this._categoryRepository = categoryRepository;
+            this._unitOfWork = unitOfWork;
         }
 
         // GET: /Post/

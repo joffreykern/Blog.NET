@@ -14,9 +14,14 @@ namespace Blog.Infrastructure
     {
         protected EntitiesModel Context { get; private set; }
 
-        public Repository(EntitiesModel context)
+        protected Repository(EntitiesModel context)
         {
             Context = context;
+        }
+
+        public Repository(IContextFactory contextFactory)
+            : this(contextFactory.Get())
+        {
         }
 
         public void Add(TEntity instance)

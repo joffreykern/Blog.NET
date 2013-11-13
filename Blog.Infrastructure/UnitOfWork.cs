@@ -19,9 +19,14 @@ namespace Blog.Infrastructure
             }
         }
 
-        public UnitOfWork(EntitiesModel context)
+        protected UnitOfWork(EntitiesModel context)
         {
             this._context = context;
+        }
+
+        public UnitOfWork(IContextFactory contextFactory)
+            : this(contextFactory.Get())
+        {
         }
 
         public void SaveChanges()
